@@ -2,6 +2,7 @@
 <head>
 	<title></title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
 	<style type="text/css">
 		body,html{width:100%;height:100%;padding:0;margin:0;}
 
@@ -61,76 +62,8 @@
 	    <span class="line" style="width:120px"></span>
 	    <span class="marker"></span>
 	</div>
-	<div class="ui-wrapper" style="overflow:hidden;width:100%;height:25px;position:relative;">
-		<div class="section" style="width:40px;background:blue;">
-			<div class="dragbar"></div>
-		</div>
-		<div class="section" style="width:30px;background:green;">
-			<div class="dragbar"></div>
-		</div>
-		<div class="section" style="width:40px;background:yellow;">
-			<div class="dragbar"></div>
-		</div>
-	</div>
-
-
-	<script type="text/javascript">
-		var RangeInterface = {
-			duration: 60,
-			dragging: false,
-			dragbar_width: 3,
-			init : function() {
-						var parentThis = this;
-
-					   // insert section-body divs for dragging
-					   $('.section').each(function(index, key) {
-					   		$('<div />')
-					   		.addClass('section-body')
-					   		.css('width', $(this).width() - 3)
-					   		.appendTo($(this));
-					   });
-
-					   $('.section').on('mousedown', '.section-body, .dragbar', function(e){
-				       e.preventDefault();
-				       parentThis.dragging = true;
-
-				       var $this = $(this);
-				       var start_position = e.pageX - $this.parent().offset().left;
-				       var main = $('#main');
-
-				       $this.addClass('dragging');
-
-				       $(document).mousemove(function(e){
-				       		if ($this.is('.dragbar')) {
-				       			var width = e.pageX-$this.parent().offset().left - parentThis.dragbar_width;
-
-				       			$this
-				       				.parent()
-				       				.css('width', width)
-				       				.find('.section-body')
-				       					.css('width', width);
-
-				       		} else if ($this.is('.section-body')) {
-				       			var left = e.pageX - start_position;
-				       			$this.parent().css('left', left);
-
-				       		}
-				       });
-				    });
-
-					$(document).mouseup(function(e){
-				       if (parentThis.dragging) 
-				       {
-				           $(document).unbind('mousemove');
-				           parentThis.dragging = false;
-				           $('.section-body').removeClass('dragging');
-				       }
-	    			});
-			}
-		};
-
-		RangeInterface.init();
-
-	</script>
+	<button onclick="$('#ui-wrapper').multipleRangeInterface('addSection');">Add Section</button>
+	<div id="ui-wrapper" style="overflow:hidden;width:100%;height:25px;position:relative;"></div>
+	<script src="multiple-range-interface.js"></script>
 </body>
 </html>
