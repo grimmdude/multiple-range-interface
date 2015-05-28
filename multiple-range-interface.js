@@ -1,15 +1,18 @@
 (function( $ ) {
 
-    $.fn.multipleRangeInterface = function(method) {
+    $.fn.multipleRangeInterface = function(method, arguments) {
     	var rangeInterface = this;
 
 		var methods = {
 			addSection : function(options) {
+						var default_options = {color: 'blue'};
+						var options = $.extend(default_options, options);
+						
 						var section = $('<div />').addClass('section').css({'width' : '25px', 'background' : 'blue'});
 						var dragbar = $('<div />').addClass('dragbar');
 						var section_body = $('<div />').addClass('section-body');
-
-						rangeInterface.append(section.css('background', 'green').data('sectionId', this.getNextSectionId()));
+						
+						rangeInterface.append(section.css('background', options.color).data('sectionId', this.getNextSectionId()));
 
 						// insert dragbars and section-body divs for dragging
 						$('.section', rangeInterface).each(function(index, key) {
@@ -47,11 +50,14 @@
 			},
 			setValues : function() {
 
+			},
+			getRandomNumber : function(min, max) {
+						return Math.floor(Math.random() * (max - min + 1)) + min;
 			}
 		};
 
 		if (methods.hasOwnProperty(method)) {
-			return methods[method]();
+			return methods[method](arguments);
 		}
     	else {
     		var duration = 60;
@@ -59,7 +65,7 @@
 			var dragbar_width = 3;
 			var sections = {};
 
-		   this.on('mousedown', '.section-body, .dragbar', function(e){
+		   	this.empty().on('mousedown', '.section-body, .dragbar', function(e){
 		       e.preventDefault();
 		       dragging = true;
 
@@ -94,8 +100,7 @@
 		    		dragging = false;
 		   			$('.section-body', this).removeClass('dragging');
 
-		   			console.log(rangeInterface.multipleRangeInterface('getValues'));
-
+		   			//console.log(rangeInterface.multipleRangeInterface('getValues'));
 		   		}
 			});
     	}
@@ -105,6 +110,3 @@
     };
  
 }( jQuery ));
- 
-// Usage example:
-$( "#ui-wrapper" ).multipleRangeInterface();
