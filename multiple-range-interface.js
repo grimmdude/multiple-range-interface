@@ -11,8 +11,12 @@
 						var section = $('<div />').addClass('section').css({'width' : '25px', 'background' : 'blue'});
 						var dragbar = $('<div />').addClass('dragbar');
 						var section_body = $('<div />').addClass('section-body');
-						
-						rangeInterface.append(section.css('background', options.color).data('sectionId', this.getNextSectionId()));
+
+						rangeInterface.append(section.css('background', options.color).data('sectionData', {
+																											id: this.getNextSectionId(),
+																											start: 0,
+																											stop: 0
+																											}));
 
 						// insert dragbars and section-body divs for dragging
 						$('.section', rangeInterface).each(function(index, key) {
@@ -20,36 +24,65 @@
 								.append(dragbar)
 								.append(section_body.css('width', $(this).width() - 3));
 						});
+
+						return rangeInterface;
 			},
 			getNextSectionId : function() {
 						if ($('.section', rangeInterface).length >= 1) {
 							var ids = [];
 
 							$('.section', rangeInterface).each(function() {
-								ids.push($(this).data('sectionId'));
+								ids.push($(this).data('sectionData').id);
 							});
 
-							return ids.sort()[ids.length - 1] + 1;
+							return ids[ids.length - 1] + 1;
 						}
 						
 						return 1;
 			},
 			getValues : function() {
 						var values = [];
-						$('.section', rangeInterface).each(function(index, key) {
-							var $this = $(this);
 
-							values.push({
-											'id'	: $this.data('sectionId'),
-											'start' : $this.position().left,
-											'stop' 	: $this.position().left + $(this).width()
-										});
+						$('.section', rangeInterface).each(function(index, key) {
+							values.push($(this).data('sectionData'));
 						});
 
 						return values;
 			},
-			setValues : function() {
+			setValues : function(options) {
+						// First make sure id is present in options
+						if (options.hasOwnProperty('id')) {
+							$('.section', rangeInterface).each(function(index, key) {
+								var $this = $(this);
 
+								if ($this.data('sectionData').id == options.id) {
+									var new_data = $.extend($this.data('sectionData'), options);
+									$this.data('sectionData', new_data);
+
+									if (options.hasOwnProperty('start')) {
+										$this.css('left', options.start);
+									}
+
+									if (options.hasOwnProperty('stop')) {
+										var width = options.stop - $this.position().left
+										$this.css('width', width)
+											.find('.section-body')
+		       									.css('width', width);
+									}
+
+									if (options.hasOwnProperty('color')) {
+										$this.css('background', options.color);
+									}
+
+									console.log(new_data);
+								}
+							});
+
+							return true;
+						}
+
+						console.error("id is required for setValues method.");
+						return false;
 			},
 			getRandomNumber : function(min, max) {
 						return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -77,18 +110,29 @@
 
 		       $(document).mousemove(function(e){
 		       		if ($this.is('.dragbar')) {
-		       			var width = e.pageX - $this.parent().offset().left - dragbar_width;
-
+		       			var width = e.pageX - $this.parent().offset().left;// - dragbar_width;
+		       			/*
 		       			$this
 		       				.parent()
 		       				.css('width', width)
 		       				.find('.section-body')
 		       					.css('width', width);
+		       					*/
+
+		       			methods.setValues({
+		       								id: $this.parent().data('sectionData').id,
+		       								stop:  $this.parent().position().left + width
+		       							});
 
 
 		       		} else if ($this.is('.section-body')) {
 		       			var left = e.pageX - start_position;
-		       			$this.parent().css('left', left);
+		       			//$this.parent().css('left', left);
+
+		       			methods.setValues({
+		       								id: $this.parent().data('sectionData').id,
+		       								start:  left
+		       							});
 		       		}
 		       });
 		    });
@@ -100,7 +144,7 @@
 		    		dragging = false;
 		   			$('.section-body', this).removeClass('dragging');
 
-		   			//console.log(rangeInterface.multipleRangeInterface('getValues'));
+		   			console.log(rangeInterface.multipleRangeInterface('getValues'));
 		   		}
 			});
     	}
