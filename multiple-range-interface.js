@@ -5,10 +5,10 @@
 
 		var methods = {
 			addSection : function(options) {
-						var default_options = {color: 'blue'};
+						var default_options = {color: this.getRandomColor()};
 						var options = $.extend(default_options, options);
 						
-						var section = $('<div />').addClass('section').css({'width' : '25px', 'background' : 'blue'});
+						var section = $('<div />').addClass('section').css({'width' : '25px'});
 						var dragbar = $('<div />').addClass('dragbar');
 						var section_body = $('<div />').addClass('section-body');
 
@@ -74,18 +74,35 @@
 										$this.css('background', options.color);
 									}
 
-									console.log(new_data);
+									//console.log(new_data);
 								}
 							});
 
+							this.onChangeFunc();
 							return true;
 						}
 
 						console.error("id is required for setValues method.");
 						return false;
 			},
+			// Event methods
+			onChange : function(callback) {
+						// Not right...
+						this.onChangeFunc = callback;
+			},
+			onChangeFunc : function() {},
+
+			// Utility methods
 			getRandomNumber : function(min, max) {
 						return Math.floor(Math.random() * (max - min + 1)) + min;
+			},
+			getRandomColor : function() {
+					    var letters = '0123456789ABCDEF'.split('');
+					    var color = '#';
+					    for (var i = 0; i < 6; i++ ) {
+					        color += letters[Math.floor(Math.random() * 16)];
+					    }
+					    return color;
 			}
 		};
 
@@ -103,7 +120,7 @@
 		       dragging = true;
 
 		       var $this = $(this);
-		       var start_position = e.pageX - $this.parent().offset().left;
+		       var start_position = e.pageX - $this.parent().position().left;
 		       var main = $('#main');
 
 		       $this.addClass('dragging');
@@ -144,7 +161,7 @@
 		    		dragging = false;
 		   			$('.section-body', this).removeClass('dragging');
 
-		   			console.log(rangeInterface.multipleRangeInterface('getValues'));
+		   			//console.log(rangeInterface.multipleRangeInterface('getValues'));
 		   		}
 			});
     	}
