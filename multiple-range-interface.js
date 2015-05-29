@@ -116,6 +116,7 @@
 			var sections = {};
 
 		   	this.empty().on('mousedown touchstart', '.section-body, .dragbar', function(e){
+		   		alert('test');
 		       e.preventDefault();
 		       dragging = true;
 
