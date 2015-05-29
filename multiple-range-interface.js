@@ -115,7 +115,7 @@
 			var dragbar_width = 3;
 			var sections = {};
 
-		   	this.empty().on('mousedown', '.section-body, .dragbar', function(e){
+		   	this.empty().on('mousedown, touchstart', '.section-body, .dragbar', function(e){
 		       e.preventDefault();
 		       dragging = true;
 
