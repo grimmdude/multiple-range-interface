@@ -115,7 +115,7 @@
 			var dragbar_width = 3;
 			var sections = {};
 
-		   	this.empty().on('mousedown, touchstart', '.section-body, .dragbar', function(e){
+		   	this.empty().on('mousedown touchstart', '.section-body, .dragbar', function(e){
 		       e.preventDefault();
 		       dragging = true;
 
@@ -125,7 +125,7 @@
 
 		       $this.addClass('dragging');
 
-		       $(document).mousemove(function(e){
+		       $(document).on('mousemove touchmove', function(e){
 		       		if ($this.is('.dragbar')) {
 		       			var width = e.pageX - $this.parent().offset().left;// - dragbar_width;
 		       			/*
@@ -154,7 +154,7 @@
 		       });
 		    });
 
-			$(document).mouseup(function(e){
+			$(document).on('mouseup touchend', function(e){
 		   		if (dragging) 
 		     	{
 		      		$(document).unbind('mousemove');
