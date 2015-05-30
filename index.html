@@ -29,12 +29,15 @@
 			cursor:-moz-grab;
 		}
 
-		.section .section-body.dragging {
+		.section.dragging {
+			z-index:999;
+		}
+
+		.section.dragging .section-body {
 			cursor:grabbing;
 			cursor:-webkit-grabbing;
 			cursor:-moz-grabbing;
 		}
-
 	</style>
 </head>
 <body>

@@ -110,10 +110,7 @@
 			return methods[method](arguments);
 		}
     	else {
-    		var duration = 60;
 			var dragging = false;
-			var dragbar_width = 3;
-			var sections = {};
 
 		   	this.empty().on('mousedown touchstart', '.section-body, .dragbar', function(e){
 		       e.preventDefault();
@@ -123,11 +120,11 @@
 		       var start_position = e.pageX - $this.parent().position().left;
 		       var main = $('#main');
 
-		       $this.addClass('dragging');
+		       $this.parent().addClass('dragging');
 
 		       $(document).on('mousemove touchmove', function(e){
 		       		if ($this.is('.dragbar')) {
-		       			var width = e.pageX - $this.parent().offset().left;// - dragbar_width;
+		       			var width = e.pageX - $this.parent().offset().left;
 		       			/*
 		       			$this
 		       				.parent()
@@ -143,13 +140,17 @@
 
 
 		       		} else if ($this.is('.section-body')) {
-		       			var left = e.pageX - start_position;
-		       			//$this.parent().css('left', left);
+		       			var position = $this.parent().position();
+		       			
+		       			var left = e.pageX - start_position < 0 ? 0 : e.pageX - start_position;
+		       			var direction = position.left > left ? 'left' : 'right';
 
-		       			methods.setValues({
-		       								id: $this.parent().data('sectionData').id,
-		       								start:  left
-		       							});
+		       			// Setup boundries
+
+	       				methods.setValues({
+	       								id: $this.parent().data('sectionData').id,
+	       								start:  left
+	       							});
 		       		}
 		       });
 		    });
@@ -159,7 +160,7 @@
 		     	{
 		      		$(document).unbind('mousemove');
 		    		dragging = false;
-		   			$('.section-body', this).removeClass('dragging');
+		   			$('.section', this).removeClass('dragging');
 
 		   			//console.log(rangeInterface.multipleRangeInterface('getValues'));
 		   		}
