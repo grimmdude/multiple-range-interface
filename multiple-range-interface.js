@@ -146,6 +146,7 @@
 		       			// Setup boundries
 		       			if ($this.parent().position().left + width > rangeInterface.width()) {
 		       				width = rangeInterface.width() - $this.parent().position().left;
+		       			
 		       			}
 
 		       			methods.setValues({
@@ -180,20 +181,22 @@
 						options.onChange.call(rangeInterface, e);
 					}
 		       });
-		    });
+		    })
+			.on('mouseup', '.section-body, .dragbar', function(e) {
+				if (!dragging) {
+					// trigger the onSectionClick event
+					if (typeof options.onSectionClick == 'function') {
+						options.onSectionClick.call(rangeInterface, e, currentSectionData);
+					}
+				}
+			});
 
 			$(document).on('mouseup', function(e){
 				$('.section', this).removeClass('dragging');
 		   		
 		   		if (dragging) {
 		      		$(document).unbind('mousemove');
-		    		dragging = false;
-		   			
-		   		} else {
-		   			// trigger the onSectionClick event
-					if (typeof options.onSectionClick == 'function') {
-						options.onSectionClick.call(rangeInterface, e, currentSectionData);
-					}
+		    		dragging = false;	
 		   		}
 			});
     	}
