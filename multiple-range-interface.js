@@ -147,7 +147,8 @@
 
 	       				methods.setValues({
 	       								id: $this.parent().data('sectionData').id,
-	       								start:  left
+	       								start:  left,
+	       								stop: $this.parent().width() + left
 	       							});
 		       		}
 
