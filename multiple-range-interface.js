@@ -78,20 +78,12 @@
 								}
 							});
 
-							this.onChangeFunc();
 							return true;
 						}
 
 						console.error("id is required for setValues method.");
 						return false;
 			},
-			// Event methods
-			onChange : function(callback) {
-						// Not right...
-						this.onChangeFunc = callback;
-			},
-			onChangeFunc : function() {},
-
 			// Utility methods
 			getRandomNumber : function(min, max) {
 						return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -110,6 +102,12 @@
 			return methods[method](arguments);
 		}
     	else {
+    		var options = {
+    			onChange : function() {}
+    		};
+
+    		options = $.extend(options, method);
+
 			var dragging = false;
 
 		   	this.empty().on('mousedown touchstart', '.section-body, .dragbar', function(e){
@@ -152,6 +150,11 @@
 	       								start:  left
 	       							});
 		       		}
+
+	       			// trigger the onChange event
+					if (typeof options.onChange == 'function') {
+						options.onChange.call(rangeInterface, rangeInterface);
+					}
 		       });
 		    });
 
