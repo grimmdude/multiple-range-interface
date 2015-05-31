@@ -112,24 +112,34 @@
 		}
     	else {
     		var options = {
-    			onChange : function() {}
+    			onChange : function() {},
+    			onSectionClick : function() {}
     		};
 
     		options = $.extend(options, method);
 
 			var dragging = false;
+			var currentSectionData;
 
-		   	this.empty().on('mousedown touchstart', '.section-body, .dragbar', function(e){
+		   	this.empty().on('mousedown', '.section-body, .dragbar', function(e){
 		       e.preventDefault();
-		       dragging = true;
 
 		       var $this = $(this);
 		       var start_position = e.pageX - $this.parent().position().left;
 		       var main = $('#main');
 
+		       currentSectionData = $this.parent().data('sectionData');
+
 		       $this.parent().addClass('dragging');
 
-		       $(document).on('mousemove touchmove', function(e){
+		       	// if user just clicked then no need to run dragging code below
+				$(document).on('mouseup', function() {
+					$(document).unbind('mousemove');
+				});
+
+		       $(document).on('mousemove', function(e){
+		       		dragging = true;
+		       		
 		       		if ($this.is('.dragbar')) {
 		       			var width = e.pageX - $this.parent().offset().left;
 
@@ -167,19 +177,23 @@
 
 	       			// trigger the onChange event
 					if (typeof options.onChange == 'function') {
-						options.onChange.call(rangeInterface, rangeInterface);
+						options.onChange.call(rangeInterface, e);
 					}
 		       });
 		    });
 
-			$(document).on('mouseup touchend', function(e){
-		   		if (dragging) 
-		     	{
+			$(document).on('mouseup', function(e){
+				$('.section', this).removeClass('dragging');
+		   		
+		   		if (dragging) {
 		      		$(document).unbind('mousemove');
 		    		dragging = false;
-		   			$('.section', this).removeClass('dragging');
-
-		   			//console.log(rangeInterface.multipleRangeInterface('getValues'));
+		   			
+		   		} else {
+		   			// trigger the onSectionClick event
+					if (typeof options.onSectionClick == 'function') {
+						options.onSectionClick.call(rangeInterface, e, currentSectionData);
+					}
 		   		}
 			});
     	}
