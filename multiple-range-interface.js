@@ -27,23 +27,19 @@
 
 						return rangeInterface;
 			},
-			getNextSectionId : function() {
-						if ($('.section', rangeInterface).length >= 1) {
-							var ids = [];
+			deleteSection : function(id) {
+						$('.section', rangeInterface).each(function() {
+							if ($(this).data('sectionData').id == id) {
+								$(this).remove();
+							}
 
-							$('.section', rangeInterface).each(function() {
-								ids.push($(this).data('sectionData').id);
-							});
-
-							return ids[ids.length - 1] + 1;
-						}
-						
-						return 1;
+							return rangeInterface;
+						});
 			},
 			getValues : function() {
 						var values = [];
 
-						$('.section', rangeInterface).each(function(index, key) {
+						$('.section', rangeInterface).each(function() {
 							values.push($(this).data('sectionData'));
 						});
 
@@ -85,6 +81,19 @@
 						return false;
 			},
 			// Utility methods
+			getNextSectionId : function() {
+						if ($('.section', rangeInterface).length >= 1) {
+							var ids = [];
+
+							$('.section', rangeInterface).each(function() {
+								ids.push($(this).data('sectionData').id);
+							});
+
+							return ids[ids.length - 1] + 1;
+						}
+						
+						return 1;
+			},
 			getRandomNumber : function(min, max) {
 						return Math.floor(Math.random() * (max - min + 1)) + min;
 			},
@@ -123,13 +132,11 @@
 		       $(document).on('mousemove touchmove', function(e){
 		       		if ($this.is('.dragbar')) {
 		       			var width = e.pageX - $this.parent().offset().left;
-		       			/*
-		       			$this
-		       				.parent()
-		       				.css('width', width)
-		       				.find('.section-body')
-		       					.css('width', width);
-		       					*/
+
+		       			// Setup boundries
+		       			if ($this.parent().position().left + width > rangeInterface.width()) {
+		       				width = rangeInterface.width() - $this.parent().position().left;
+		       			}
 
 		       			methods.setValues({
 		       								id: $this.parent().data('sectionData').id,
@@ -140,10 +147,16 @@
 		       		} else if ($this.is('.section-body')) {
 		       			var position = $this.parent().position();
 		       			
-		       			var left = e.pageX - start_position < 0 ? 0 : e.pageX - start_position;
+		       			var left = e.pageX - start_position;
 		       			var direction = position.left > left ? 'left' : 'right';
 
 		       			// Setup boundries
+		       			if (left < 0) {
+		       				left = 0;
+
+		       			} else if (left + $this.parent().width() > rangeInterface.width()) {
+		       				left = rangeInterface.width() - $this.parent().width();
+		       			}
 
 	       				methods.setValues({
 	       								id: $this.parent().data('sectionData').id,
