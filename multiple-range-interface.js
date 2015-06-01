@@ -8,22 +8,24 @@
 						var default_options = {color: this.getRandomColor()};
 						var options = $.extend(default_options, options);
 						
-						var section = $('<div />').addClass('section').css({'width' : '25px'});
+						// Clear selected sections
+						$('.section', rangeInterface).removeClass('selected');
+
 						var dragbar = $('<div />').addClass('dragbar');
 						var section_body = $('<div />').addClass('section-body');
+						var section = $('<div />')
+										.addClass('section selected')
+										.css({'width' : '25px'})
+										.append(dragbar)
+										.append(section_body);
 
-						rangeInterface.append(section.css('background', options.color).data('sectionData', {
-																											id: this.getNextSectionId(),
-																											start: 0,
-																											stop: 0
-																											}));
+						var section_data = {
+											id: this.getNextSectionId(),
+											start: 0,
+											stop: 0
+											}
 
-						// insert dragbars and section-body divs for dragging
-						$('.section', rangeInterface).each(function() {
-							$(this)
-								.append(dragbar)
-								.append(section_body.css('width', $(this).width() - 3));
-						});
+						rangeInterface.append(section.css('background', options.color).data('sectionData', section_data));
 
 						return rangeInterface;
 			},
@@ -56,14 +58,31 @@
 									$this.data('sectionData', new_data);
 
 									if (options.hasOwnProperty('start')) {
-										$this.css('left', options.start);
+										if (options.hasOwnProperty('animate') && options.animate) {
+											$this.animate({
+												left: options.start,
+											}, 300);
+
+										} else {
+											$this.css('left', options.start);
+										}
 									}
 
 									if (options.hasOwnProperty('stop')) {
 										var width = options.stop - $this.position().left;
-										$this.css('width', width)
+
+										if (options.hasOwnProperty('animate') && options.animate) {
+											$this.animate({
+											    width: width,
+											}, 300)
 											.find('.section-body')
 		       									.css('width', width);
+
+										} else {
+											$this.css('width', width)
+											.find('.section-body')
+		       									.css('width', width);
+										}
 									}
 
 									if (options.hasOwnProperty('color')) {
@@ -183,6 +202,10 @@
 		    })
 			.on('mouseup', '.section-body, .dragbar', function(e) {
 				if (!dragging) {
+					// Clicked
+					$('.section', rangeInterface).removeClass('selected');
+					$(this).parent().addClass('selected');
+
 					// trigger the onSectionClick event
 					if (typeof options.onSectionClick == 'function') {
 						options.onSectionClick.call(rangeInterface, e, currentSectionData);

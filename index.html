@@ -40,6 +40,10 @@
 			cursor:-moz-grabbing;
 		}
 
+		.section.selected .section-body {
+			background: yellow;
+		}
+
 		table tr.selected {color:yellow;}
 
 		[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -89,35 +93,6 @@
 	<script type="text/javascript">
 		var slidesApp = angular.module('slidesApp', []);
 		
-		slidesApp.controller('slidesController', ['$scope', function($scope) {
-			$scope.interfaceData;
-			$scope.selectedSection;
-			$scope.slides = [];
-			$scope.selectedSlideIndex;
-
-			// Add a new section.  Clean this up
-			$scope.addSection = function(interfaceId) {
-				$scope.interfaceData = angular.element('#' + interfaceId)
-										.multipleRangeInterface('addSection')
-										.multipleRangeInterface('getValues');
-
-				$scope.selectedSection = $scope.interfaceData[$scope.interfaceData.length - 1];
-
-				$scope.slides.push({
-									id: $scope.interfaceData[$scope.interfaceData.length - 1].id, 
-									content: 'Type text here to attach to section ' + $scope.interfaceData[$scope.interfaceData.length - 1].id
-									});
-
-				$scope.selectedSlideIndex = $scope.slides.length - 1;
-			};
-
-			// When a section is clicked/selected
-			$scope.onSectionClick = function(data) {
-				$scope.selectedSection = data;
-				$scope.selectedSlideIndex = data.id - 1;
-			};
-		}]);
-		
 		slidesApp.directive('multipleRangeInterface', function($parse) {
 			return {
 				restrict : 'A',
@@ -149,6 +124,35 @@
 				}
 			};
 		});
+
+		slidesApp.controller('slidesController', ['$scope', function($scope) {
+			$scope.interfaceData;
+			$scope.selectedSection;
+			$scope.slides = [];
+			$scope.selectedSlideIndex;
+
+			// Add a new section.  Clean this up
+			$scope.addSection = function(interfaceId) {
+				$scope.interfaceData = angular.element('#' + interfaceId)
+										.multipleRangeInterface('addSection')
+										.multipleRangeInterface('getValues');
+
+				$scope.selectedSection = $scope.interfaceData[$scope.interfaceData.length - 1];
+
+				$scope.slides.push({
+									id: $scope.interfaceData[$scope.interfaceData.length - 1].id, 
+									content: 'Type text here to attach to section ' + $scope.interfaceData[$scope.interfaceData.length - 1].id
+									});
+
+				$scope.selectedSlideIndex = $scope.slides.length - 1;
+			};
+
+			// When a section is clicked/selected
+			$scope.onSectionClick = function(data) {
+				$scope.selectedSection = data;
+				$scope.selectedSlideIndex = data.id - 1;
+			};
+		}]);
 	</script>
 </body>
 </html>
