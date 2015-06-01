@@ -101,12 +101,14 @@
 										.multipleRangeInterface('addSection')
 										.multipleRangeInterface('getValues');
 
+				$scope.selectedSection = $scope.interfaceData[$scope.interfaceData.length - 1];
+
 				$scope.slides.push({
 									id: $scope.interfaceData[$scope.interfaceData.length - 1].id, 
 									content: 'Type text here to attach to section ' + $scope.interfaceData[$scope.interfaceData.length - 1].id
 									});
 
-				$scope.selectedSlideIndex = $scope.slides.length -1;
+				$scope.selectedSlideIndex = $scope.slides.length - 1;
 			};
 
 			// When a section is clicked/selected
