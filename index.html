@@ -2,10 +2,11 @@
 <head>
 	<title>Multiple Range Interface jQuery Plugin Demo</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
 	<style type="text/css">
 		body {background: #333333;color:#FFFFFF;}
-	</style>
-	<style type="text/css">
+		h1, h2 {font-family:Oswald;}
+
 		#ui-wrapper {overflow:hidden;width:100%;height:35px;position:relative;background:#ccc;box-shadow:0px 0px 11px #000}
 
 		.section {
@@ -69,11 +70,12 @@
 					</tr>
 					<tr ng-repeat="data in interfaceData" ng-class="{selected: data.id == selectedSection.id}">
 						<td>{{data.id}}</td>
-						<td>{{data.start}}</td>
-						<td>{{data.stop}}</td>
+						<td>{{data.start}}px</td>
+						<td>{{data.stop}}px</td>
 					</tr>
 				</table>
-				<p>Click <code>Add Section</code> to add a new section and drag it around.</p>
+				<h2>Text Associated With Section {{selectedSection.id}}</h2>
+				<textarea class="form-control" ng-model="slides[selectedSlideIndex].content"></textarea>
 			</div>
 		</div>
 	</div>
@@ -90,21 +92,28 @@
 		slidesApp.controller('slidesController', ['$scope', function($scope) {
 			$scope.interfaceData;
 			$scope.selectedSection;
+			$scope.slides = [];
+			$scope.selectedSlideIndex;
 
 			// Add a new section.  Clean this up
 			$scope.addSection = function(interfaceId) {
 				$scope.interfaceData = angular.element('#' + interfaceId)
 										.multipleRangeInterface('addSection')
 										.multipleRangeInterface('getValues');
+
+				$scope.slides.push({
+									id: $scope.interfaceData[$scope.interfaceData.length - 1].id, 
+									content: ''
+									});
+
+				$scope.selectedSlideIndex = $scope.slides.length -1;
 			};
 
 			// When a section is clicked/selected
 			$scope.onSectionClick = function(data) {
-				$scope.$apply(function() {
-					$scope.selectedSection = data;
-				});
+				$scope.selectedSection = data;
+				$scope.selectedSlideIndex = data.id - 1;
 			};
-
 		}]);
 		
 		slidesApp.directive('multipleRangeInterface', function($parse) {
@@ -128,7 +137,9 @@
 					               });
 								},
 								onSectionClick:function(e, sectionData) {
-									onSectionClickAccessor(scope, {data : sectionData});
+									scope.$apply(function (scope) {
+										onSectionClickAccessor(scope, {data : sectionData});
+									})
 								}
 							}
 						);
