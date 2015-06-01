@@ -1,6 +1,6 @@
 (function( $ ) {
 
-    $.fn.multipleRangeInterface = function(method, arguments) {
+    $.fn.multipleRangeInterface = function(method, parameters) {
     	var rangeInterface = this;
 
 		var methods = {
@@ -19,7 +19,7 @@
 																											}));
 
 						// insert dragbars and section-body divs for dragging
-						$('.section', rangeInterface).each(function(index, key) {
+						$('.section', rangeInterface).each(function() {
 							$(this)
 								.append(dragbar)
 								.append(section_body.css('width', $(this).width() - 3));
@@ -48,7 +48,7 @@
 			setValues : function(options) {
 						// First make sure id is present in options
 						if (options.hasOwnProperty('id')) {
-							$('.section', rangeInterface).each(function(index, key) {
+							$('.section', rangeInterface).each(function() {
 								var $this = $(this);
 
 								if ($this.data('sectionData').id == options.id) {
@@ -60,7 +60,7 @@
 									}
 
 									if (options.hasOwnProperty('stop')) {
-										var width = options.stop - $this.position().left
+										var width = options.stop - $this.position().left;
 										$this.css('width', width)
 											.find('.section-body')
 		       									.css('width', width);
@@ -108,7 +108,7 @@
 		};
 
 		if (methods.hasOwnProperty(method)) {
-			return methods[method](arguments);
+			return methods[method](parameters);
 		}
     	else {
     		var options = {
@@ -126,7 +126,6 @@
 
 		       var $this = $(this);
 		       var start_position = e.pageX - $this.parent().position().left;
-		       var main = $('#main');
 
 		       currentSectionData = $this.parent().data('sectionData');
 
@@ -156,10 +155,10 @@
 
 
 		       		} else if ($this.is('.section-body')) {
-		       			var position = $this.parent().position();
-		       			
+		       			//var position = $this.parent().position();
+		       			//var direction = position.left > left ? 'left' : 'right';
+
 		       			var left = e.pageX - start_position;
-		       			var direction = position.left > left ? 'left' : 'right';
 
 		       			// Setup boundries
 		       			if (left < 0) {
@@ -191,7 +190,7 @@
 				}
 			});
 
-			$(document).on('mouseup', function(e){
+			$(document).on('mouseup', function() {
 				$('.section', this).removeClass('dragging');
 		   		
 		   		if (dragging) {
