@@ -54,18 +54,31 @@
 <body ng-app="slidesApp" ng-controller="slidesController">
 	<div class="container" ng-cloak>
 		<div class="row">
+			<div class="col-lg-7">
+				<div id="player"></div>
+			</div>
+			<div class="col-lg-5">
+				<h4>Slide:</h4>
+				<p class="well" style="color:000000;min-height:100px;">{{slides[currentSlideIndex].content}}</p>
+			</div>
+		</div>
+		<div class="row">
 			<div class="col-lg-12">
 				<h1>Multiple Range Interface - jQuery Plugin</h1>
 				<p>
-					<button class="btn btn-success" ng-click="addSection('ui-wrapper')">Add Section</button>
+					<button class="btn btn-success" ng-click="addSection()">Add Section</button>
 				</p>
 			</div>
 			<div class="col-lg-12">
+				<div style="height:12px;background:red;position:relative;">
+					<div style="width:3px;background:black;height:12px;position:absolute;left:{{interfaceWidth * video.currentPercent/100 - 3}}px;"></div>
+				</div>
 				<div multiple-range-interface ng-model="interfaceData" mri-on-section-click="onSectionClick(data)" id="ui-wrapper" ></div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-lg-12">
+				<!--
 				<table class="table">
 					<tr>
 						<th>ID</th>
@@ -78,7 +91,8 @@
 						<td>{{data.stop}}px</td>
 					</tr>
 				</table>
-				<h2>Text Associated With Section {{selectedSection.id}}</h2>
+				-->
+				<h2>Edit Text Associated With Section {{selectedSection.id}}</h2>
 				<textarea class="form-control" ng-model="slides[selectedSlideIndex].content"></textarea>
 			</div>
 		</div>
@@ -87,6 +101,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular.min.js"></script>
 	<script src="multiple-range-interface.js"></script>
+	<script src="youtube.js"></script>
 	<script type="text/javascript">
 		//$( "#ui-wrapper" ).multipleRangeInterface();
 	</script>
@@ -125,15 +140,24 @@
 			};
 		});
 
-		slidesApp.controller('slidesController', ['$scope', function($scope) {
+		slidesApp.controller('slidesController', ['$scope', '$window', '$interval', function($scope, $window, $interval) {
+			$scope.video;
+			$scope.interfaceId = 'ui-wrapper';
+			$scope.interfaceElement = angular.element('#' + $scope.interfaceId);
+			$scope.interfaceWidth = $scope.interfaceElement.width();
 			$scope.interfaceData;
 			$scope.selectedSection;
 			$scope.slides = [];
 			$scope.selectedSlideIndex;
+			$scope.currentSlideIndex;
+
+			$scope.init = function() {
+				$scope.video = $window.VIDEO;
+			}
 
 			// Add a new section.  Clean this up
-			$scope.addSection = function(interfaceId) {
-				$scope.interfaceData = angular.element('#' + interfaceId)
+			$scope.addSection = function() {
+				$scope.interfaceData = $scope.interfaceElement
 										.multipleRangeInterface('addSection')
 										.multipleRangeInterface('getValues');
 
@@ -145,6 +169,7 @@
 									});
 
 				$scope.selectedSlideIndex = $scope.slides.length - 1;
+				console.log($scope.video);
 			};
 
 			// When a section is clicked/selected
@@ -152,6 +177,25 @@
 				$scope.selectedSection = data;
 				$scope.selectedSlideIndex = data.id - 1;
 			};
+
+			$scope.timer = $interval(function(count) {
+				if (typeof $scope.video.player.getCurrentTime === 'function') {
+					$scope.video.currentTime = $scope.video.player.getCurrentTime();
+					$scope.video.currentPercent = $scope.video.currentTime/$scope.video.duration*100;
+
+					$scope.currentSlideIndex = false;
+
+					for (var i in $scope.interfaceData) {
+						if ($scope.interfaceData[i].start/$scope.interfaceWidth*100 <= $scope.video.currentPercent && 
+							$scope.interfaceData[i].stop/$scope.interfaceWidth*100 >= $scope.video.currentPercent) {
+							$scope.currentSlideIndex = i;
+						}
+					}
+				}
+
+          	}, 100);
+
+			$scope.init();
 		}]);
 	</script>
 </body>

@@ -22,7 +22,7 @@
 						var section_data = {
 											id: this.getNextSectionId(),
 											start: 0,
-											stop: 0
+											stop: 25
 											}
 
 						rangeInterface.append(section.css('background', options.color).data('sectionData', section_data));
@@ -189,7 +189,7 @@
 
 	       				methods.setValues({
 	       								id: $this.parent().data('sectionData').id,
-	       								start:  left,
+	       								start: left,
 	       								stop: $this.parent().width() + left
 	       							});
 		       		}
