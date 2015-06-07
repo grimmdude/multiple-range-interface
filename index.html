@@ -102,9 +102,6 @@
 	<script src="multiple-range-interface.js"></script>
 	<script src="youtube.js"></script>
 	<script type="text/javascript">
-		//$( "#ui-wrapper" ).multipleRangeInterface();
-	</script>
-	<script type="text/javascript">
 		var slidesApp = angular.module('slidesApp', []);
 		
 		slidesApp.directive('multipleRangeInterface', function($parse) {
@@ -168,7 +165,6 @@
 									});
 
 				$scope.selectedSlideIndex = $scope.slides.length - 1;
-				console.log($scope.video);
 			};
 
 			// When a section is clicked/selected

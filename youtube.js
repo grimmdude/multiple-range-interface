@@ -29,7 +29,6 @@ function onPlayerReady(event) {
 // 5. The API calls this function when the player's state changes.
 //    The function indicates that when playing a video (state=1),
 //    the player should play for six seconds and then stop.
-var done = false;
 function onPlayerStateChange(event) {
 	/*
 	if (event.data == YT.PlayerState.PLAYING && !done) {
@@ -38,30 +37,7 @@ function onPlayerStateChange(event) {
 	}
 	*/
 }
+
 function stopVideo() {
 	VIDEO.player.stopVideo();
 }
-
-setInterval(function() {
-if (typeof VIDEO.player.getCurrentTime === 'function') {
-	var duration = VIDEO.player.getDuration();
-	var currentTime = VIDEO.player.getCurrentTime();
-	//console.log(currentTime/duration*100+'%');
-
-	for (var i in annotations) {
-		if (annotations[i].start <= currentTime && annotations[i].stop >= currentTime) {
-			//console.log(annotations[i].content);
-		}
-	}
-
-  //console.log(player.getCurrentTime());
-}
-
-}, 1000);
-
-
-var annotations = [
-	{'start':4, 'stop':10, 'content':'hi'},
-	{'start':10, 'stop':100, 'content':'second'},
-	{'start':6, 'stop':19, 'content':'third'}
-];
