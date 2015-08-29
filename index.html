@@ -53,7 +53,8 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<p>
-						<button class="btn btn-success" onclick="$('#range-interface').multipleRangeInterface('addSection');updateJsonText();">Add Section</button>
+						<button class="btn btn-success" onclick="$('#range-interface').multipleRangeInterface('addSection');updateJsonText();">Add Section</button>&nbsp;
+						<button class="btn btn-danger" onclick="$('#range-interface').multipleRangeInterface('deleteSection', $('#range-interface').multipleRangeInterface('getSelectedSection').id);updateJsonText();">Delete Selected Section</button>
 					</p>
 				</div>
 				<div class="col-lg-12">
@@ -74,7 +75,7 @@
 														updateJsonText();
 													},
 													onSectionClick : function() {
-
+														updateJsonText();
 													}
 												});
 			function updateJsonText() {

@@ -22,8 +22,11 @@
 						var section_data = {
 											id: this.getNextSectionId(),
 											start: 0,
-											stop: 25
-											}
+											stop: 25,
+											selected: true
+											};
+
+						this.selectSection(this.getNextSectionId());
 
 						rangeInterface.append(section.css('background', options.color).data('sectionData', section_data));
 
@@ -98,6 +101,26 @@
 
 						console.error("id is required for setValues method.");
 						return false;
+			},
+			selectSection : function(id) {
+				var values = this.getValues();
+
+				for (var i in values) {
+					if (values[i].id == id) {
+						values[i].selected = true;
+
+					} else {
+						values[i].selected = false;
+					}
+				}
+			},
+			getSelectedSection : function() {
+				var values = this.getValues();
+				for (var i in values) {
+					if (values[i].selected) {
+						return values[i];
+					}
+				}
 			},
 			// Utility methods
 			getNextSectionId : function() {
@@ -205,6 +228,8 @@
 					// Clicked
 					$('.section', rangeInterface).removeClass('selected');
 					$(this).parent().addClass('selected');
+
+					methods.selectSection($(this).parent().data('sectionData').id);
 
 					// trigger the onSectionClick event
 					if (typeof options.onSectionClick == 'function') {
