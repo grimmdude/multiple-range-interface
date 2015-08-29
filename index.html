@@ -1,13 +1,13 @@
 <html>
 <head>
-	<title>Multiple Range Interface jQuery Plugin Demo</title>
+	<title>Multiple Range Interface jQuery Plugin</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
 	<style type="text/css">
 		body {background: #333333;color:#FFFFFF;}
 		h1, h2 {font-family:Oswald;}
 
-		#ui-wrapper {overflow:hidden;width:100%;height:35px;position:relative;background:#ccc;box-shadow:0px 0px 11px #000}
+		#range-interface {overflow:hidden;width:100%;height:35px;position:relative;background:#ccc;box-shadow:0px 0px 11px #000}
 
 		.section {
 			position:absolute;
@@ -45,153 +45,26 @@
 		}
 
 		table tr.selected {color:yellow;}
-
-		[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-  			display: none !important;
-		}
 	</style>
 </head>
-<body ng-app="slidesApp" ng-controller="slidesController">
-	<div class="container" ng-cloak>
-		<div class="row">
-			<div class="col-lg-7">
-				<div id="player"></div>
-			</div>
-			<div class="col-lg-5">
-				<h4>Slide:</h4>
-				<p class="well" style="color:000000;min-height:100px;">{{slides[currentSlideIndex].content}}</p>
-			</div>
-		</div>
+<body>
+	<div class="container">
+		<h1>Multiple Range Interface</h1>
 		<div class="row">
 			<div class="col-lg-12">
 				<p>
-					<button class="btn btn-success" ng-click="addSection()">Add Section</button>
+					<button class="btn btn-success" onclick="$('#range-interface').multipleRangeInterface('addSection');">Add Section</button>
 				</p>
 			</div>
 			<div class="col-lg-12">
-				<div style="height:12px;background:red;position:relative;">
-					<div style="width:3px;background:black;height:12px;position:absolute;left:{{interfaceWidth * video.currentPercent/100 - 3}}px;"></div>
-				</div>
-				<div multiple-range-interface ng-model="interfaceData" mri-on-section-click="onSectionClick(data)" id="ui-wrapper" ></div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-12">
-				<!--
-				<table class="table">
-					<tr>
-						<th>ID</th>
-						<th>Start</th>
-						<th>Stop</th>
-					</tr>
-					<tr ng-repeat="data in interfaceData" ng-class="{selected: data.id == selectedSection.id}">
-						<td>{{data.id}}</td>
-						<td>{{data.start}}px</td>
-						<td>{{data.stop}}px</td>
-					</tr>
-				</table>
-				-->
-				<h2>Edit Text Associated With Section {{selectedSection.id}}</h2>
-				<textarea class="form-control" ng-model="slides[selectedSlideIndex].content"></textarea>
+				<div id="range-interface" ></div>
 			</div>
 		</div>
 	</div>
-	<a href="https://github.com/grimmdude/multiple-range-interface"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular.min.js"></script>
 	<script src="multiple-range-interface.js"></script>
-	<script src="youtube.js"></script>
 	<script type="text/javascript">
-		var slidesApp = angular.module('slidesApp', []);
-		
-		slidesApp.directive('multipleRangeInterface', function($parse) {
-			return {
-				restrict : 'A',
-				replace: true,
-				compile: function(element, attrs) {
-
-					var modelAccessor = $parse(attrs.ngModel);
-					var onSectionClickAccessor = $parse(attrs.mriOnSectionClick);
-
-					return function(scope, element, attrs, controller) {
-						element.multipleRangeInterface(
-							{
-								onChange:function() {
-									var values = element.multipleRangeInterface('getValues');
-
-									scope.$apply(function (scope) {
-					                  // Change bound variable
-					                  modelAccessor.assign(scope, values);
-					               });
-								},
-								onSectionClick:function(e, sectionData) {
-									scope.$apply(function (scope) {
-										onSectionClickAccessor(scope, {data : sectionData});
-									})
-								}
-							}
-						);
-					}
-				}
-			};
-		});
-
-		slidesApp.controller('slidesController', ['$scope', '$window', '$interval', function($scope, $window, $interval) {
-			$scope.video;
-			$scope.interfaceId = 'ui-wrapper';
-			$scope.interfaceElement = angular.element('#' + $scope.interfaceId);
-			$scope.interfaceWidth = $scope.interfaceElement.width();
-			$scope.interfaceData;
-			$scope.selectedSection;
-			$scope.slides = [];
-			$scope.selectedSlideIndex;
-			$scope.currentSlideIndex;
-
-			$scope.init = function() {
-				$scope.video = $window.VIDEO;
-			}
-
-			// Add a new section.  Clean this up
-			$scope.addSection = function() {
-				$scope.interfaceData = $scope.interfaceElement
-										.multipleRangeInterface('addSection')
-										.multipleRangeInterface('getValues');
-
-				$scope.selectedSection = $scope.interfaceData[$scope.interfaceData.length - 1];
-
-				$scope.slides.push({
-									id: $scope.interfaceData[$scope.interfaceData.length - 1].id, 
-									content: 'Type text here to attach to section ' + $scope.interfaceData[$scope.interfaceData.length - 1].id
-									});
-
-				$scope.selectedSlideIndex = $scope.slides.length - 1;
-			};
-
-			// When a section is clicked/selected
-			$scope.onSectionClick = function(data) {
-				$scope.selectedSection = data;
-				$scope.selectedSlideIndex = data.id - 1;
-			};
-
-			$scope.timer = $interval(function(count) {
-				if (typeof $scope.video.player.getCurrentTime === 'function') {
-					$scope.video.currentTime = $scope.video.player.getCurrentTime();
-					$scope.video.currentPercent = $scope.video.currentTime/$scope.video.duration*100;
-
-					$scope.currentSlideIndex = false;
-
-					for (var i in $scope.interfaceData) {
-						if ($scope.interfaceData[i].start/$scope.interfaceWidth*100 <= $scope.video.currentPercent && 
-							$scope.interfaceData[i].stop/$scope.interfaceWidth*100 >= $scope.video.currentPercent) {
-							$scope.currentSlideIndex = i;
-						}
-					}
-				}
-
-          	}, 100);
-
-			$scope.init();
-		}]);
+		$('#range-interface').multipleRangeInterface();
 	</script>
 </body>
 </html>
