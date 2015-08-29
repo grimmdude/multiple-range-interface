@@ -12,11 +12,18 @@ HTML:
 
 JS:
 ```js
-$('#range-interface').multipleRangeInterface();
+$('#range-interface').multipleRangeInterface({
+	onChange: function() {
+		// Do stuff when the interface is changed
+	},
+	onSectionClick: function() {
+		// Do stuff when a section is clicked
+	}
+});
 ```
 
 ##Methods
-Methods can be called like so:
+After the interface is initialized methods can be called on it like so:
 
 ```js
 $('#range-interface').multipleRangeInterface('methodName', options);
@@ -41,3 +48,10 @@ Sets values for given section id.  The `id` field must be present in the paramet
 ```js
 $('#range-interface').multipleRangeInterface('getValues' {id: 1, start: 20, stop: 44});
 ```
+
+##Browser Support
+The following browsers are what I've tested:
+* Chrome
+* Firefox
+* Opera
+If you find the plugin works in other browsers please let me know and I'll add it to the list.  Likewise if it doesn't work in certain browsers please let me know.
