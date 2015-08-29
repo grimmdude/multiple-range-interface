@@ -1,0 +1,27 @@
+{
+  "name": "multiple-range-interface",
+  "main": "multiple-range-interface.js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/grimmdude/multiple-range-interface",
+  "authors": [
+    "Garrett Grimm <garrett@grimmdude.com>"
+  ],
+  "description": "A jQuery plugin that creates an interface that allows the user to set multiple range based values",
+  "keywords": [
+    "jquery",
+    "multiple",
+    "range",
+    "interface",
+    "slider",
+    "drag",
+    "ui"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
