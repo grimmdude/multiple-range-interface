@@ -26,7 +26,7 @@ $('#range-interface').multipleRangeInterface({
 After the interface is initialized methods can be called on it like so:
 
 ```js
-$('#range-interface').multipleRangeInterface('methodName', options);
+$('#range-interface').multipleRangeInterface('methodName', parameters);
 ```
 ###addSection
 Adds a new range section.
@@ -48,10 +48,21 @@ Sets values for given section id.  The `id` field must be present in the paramet
 ```js
 $('#range-interface').multipleRangeInterface('getValues' {id: 1, start: 20, stop: 44});
 ```
+###selectSection
+Selects a range section by id.
+```js
+$('#range-interface').multipleRangeInterface('selectSection', 2);
+```
+###getSelectedSection
+Returns the data for the currently selected section.
+```js
+$('#range-interface').multipleRangeInterface('getSelectedSection');
+```
 
 ##Browser Support
 The following browsers are what I've tested:
 * Chrome
 * Firefox
 * Opera
+
 If you find the plugin works in other browsers please let me know and I'll add it to the list.  Likewise if it doesn't work in certain browsers please let me know.
