@@ -28,7 +28,7 @@
 
 						this.selectSection(this.getNextSectionId());
 
-						rangeInterface.append(section.css('background', options.color).data('sectionData', section_data));
+						rangeInterface.append(section.data('sectionData', section_data));
 
 						return rangeInterface;
 			},

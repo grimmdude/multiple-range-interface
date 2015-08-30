@@ -34,6 +34,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="multiple-range-interface.js"></script>
 		<script type="text/javascript">
+			// Initialize multiple-range-interface 
 			$('#range-interface').multipleRangeInterface({
 													onChange : function() {
 														updateJsonText();
@@ -42,6 +43,59 @@
 														updateJsonText();
 													}
 												});
+
+			
+
+
+
+
+			// Throw in some fancy animation to show how it works...
+			$('#range-interface').multipleRangeInterface('addSection').multipleRangeInterface('addSection');
+
+		  	$({sectionStart: 0}).animate({sectionStart: 120}, {
+		 		duration: 700,
+		  		easing:'swing', // can be anything
+				step: function() { // called on every step
+		   			// Update the element's text with rounded-up value:
+		   			$('#range-interface').multipleRangeInterface('setValues', {id:1, start: Math.round(this.sectionStart)});
+		   			updateJsonText();
+				},
+				complete: function() {
+							  	$({sectionStop: 145}).animate({sectionStop: 250}, {
+						 		duration: 700,
+						  		easing:'swing', // can be anything
+								step: function() { // called on every step
+						   			// Update the element's text with rounded-up value:
+						   			$('#range-interface').multipleRangeInterface('setValues', {id:1, stop: Math.round(this.sectionStop)});
+						   			updateJsonText();
+								},
+								complete: function() {
+									$({sectionStart: 0}).animate({sectionStart: 270}, {
+							 		duration: 700,
+							  		easing:'swing', // can be anything
+									step: function() { // called on every step
+							   			// Update the element's text with rounded-up value:
+							   			$('#range-interface').multipleRangeInterface('setValues', {id:2, start: Math.round(this.sectionStart)});
+							   			updateJsonText();
+									},
+									complete: function() {
+												  	$({sectionStop: 295}).animate({sectionStop: 500}, {
+											 		duration: 700,
+											  		easing:'swing', // can be anything
+													step: function() { // called on every step
+											   			// Update the element's text with rounded-up value:
+											   			$('#range-interface').multipleRangeInterface('setValues', {id:2, stop: Math.round(this.sectionStop)});
+											   			updateJsonText();
+													}
+							  				});
+									}
+							  	});
+								}
+		  				});
+				}
+		  	});
+
+
 			function updateJsonText() {
 				$('pre').text(JSON.stringify($('#range-interface').multipleRangeInterface('getValues'), null, 2));
 			}

@@ -19,6 +19,13 @@
 	cursor:grab;
 	cursor:-webkit-grab;
 	cursor:-moz-grab;
+	background: repeating-linear-gradient(
+				  45deg,
+				  #606dbc,
+				  #606dbc 10px,
+				  #465298 10px,
+				  #465298 20px
+				);
 }
 
 .section.dragging {
@@ -32,5 +39,11 @@
 }
 
 .section.selected .section-body {
-	background: yellow;
+	background: repeating-linear-gradient(
+			  45deg,
+			  #ECF57E,
+			  #ECF57E 10px,
+			  #CCD470 10px,
+			  #CCD470 20px
+			);
 }
