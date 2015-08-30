@@ -113,6 +113,8 @@
 						values[i].selected = false;
 					}
 				}
+
+				return rangeInterface;
 			},
 			getSelectedSection : function() {
 				var values = this.getValues();
@@ -188,6 +190,8 @@
 		       			if ($this.parent().position().left + width > rangeInterface.width()) {
 		       				width = rangeInterface.width() - $this.parent().position().left;
 		       			
+		       			} else if (width < 0) {
+		       				width = 0;
 		       			}
 
 		       			methods.setValues({
@@ -197,9 +201,6 @@
 
 
 		       		} else if ($this.is('.section-body')) {
-		       			//var position = $this.parent().position();
-		       			//var direction = position.left > left ? 'left' : 'right';
-
 		       			var left = e.pageX - start_position;
 
 		       			// Setup boundries
