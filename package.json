@@ -1,6 +1,6 @@
 {
   "name": "multiple-range-interface",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A jQuery plugin that creates an interface that allows the user to set multiple range based values",
   "main": "multiple-range-interface.js",
   "scripts": {

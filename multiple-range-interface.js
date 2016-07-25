@@ -192,7 +192,8 @@
 		       		dragging = true;
 
 		       		if ($this.is('.dragbar-left')) {
-                var currentPosition = e.pageX;
+                var offset = $(rangeInterface).offset();
+                var currentPosition = e.pageX - offset.left;
                 var id = $this.parent().data('sectionData').id;
                 var values = methods.getValuesById(id);
 
