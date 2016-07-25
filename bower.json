@@ -1,7 +1,7 @@
 {
   "name": "multiple-range-interface",
   "main": "multiple-range-interface.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
     "jquery": ">=1.6"
   },
