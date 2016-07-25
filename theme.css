@@ -6,7 +6,15 @@
 	height:100%;
 }
 
-.section .dragbar{
+.section .dragbar-left{
+   background-color:black;
+   height:100%;
+   float: left;
+   width: 5px;
+   cursor: col-resize;
+}
+
+.section .dragbar-right{
    background-color:black;
    height:100%;
    float: right;

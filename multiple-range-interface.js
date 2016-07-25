@@ -7,16 +7,18 @@
 			addSection : function(options) {
 						var default_options = {color: this.getRandomColor()};
 						var options = $.extend(default_options, options);
-						
+
 						// Clear selected sections
 						$('.section', rangeInterface).removeClass('selected');
 
-						var dragbar = $('<div />').addClass('dragbar');
+						var dragbarLeft = $('<div />').addClass('dragbar-left');
+            var dragbarRight = $('<div />').addClass('dragbar-right');
 						var section_body = $('<div />').addClass('section-body');
 						var section = $('<div />')
 										.addClass('section selected')
 										.css({'width' : '25px'})
-										.append(dragbar)
+										.append(dragbarLeft)
+                    .append(dragbarRight)
 										.append(section_body);
 
 						var section_data = {
@@ -40,6 +42,10 @@
 
 							return rangeInterface;
 						});
+			},
+      getValuesById : function(id) {
+						var values = $('.section[data-id=' + id + ']', rangeInterface);
+            return values.data('sectionData');
 			},
 			getValues : function() {
 						var values = [];
@@ -135,7 +141,7 @@
 
 							return ids[ids.length - 1] + 1;
 						}
-						
+
 						return 1;
 			},
 			getRandomNumber : function(min, max) {
@@ -165,11 +171,13 @@
 			var dragging = false;
 			var currentSectionData;
 
-		   	this.empty().on('mousedown', '.section-body, .dragbar', function(e){
+        /* Dragbar left */
+
+		   	this.empty().on('mousedown', '.section-body, .dragbar-left', function(e){
 		       e.preventDefault();
 
 		       var $this = $(this);
-		       var start_position = e.pageX - $this.parent().position().left;
+		       var start_position = $this.parent().position().left;
 
 		       currentSectionData = $this.parent().data('sectionData');
 
@@ -182,49 +190,28 @@
 
 		       $(document).on('mousemove', function(e){
 		       		dragging = true;
-		       		
-		       		if ($this.is('.dragbar')) {
-		       			var width = e.pageX - $this.parent().offset().left;
 
-		       			// Setup boundries
-		       			if ($this.parent().position().left + width > rangeInterface.width()) {
-		       				width = rangeInterface.width() - $this.parent().position().left;
-		       			
-		       			} else if (width < 0) {
-		       				width = 0;
+		       		if ($this.is('.dragbar-left')) {
+                var currentPosition = e.pageX;
+                var id = $this.parent().data('sectionData').id;
+                var values = methods.getValuesById(id);
+
+		       			if (currentPosition > values.stop - 10) {
+		       				currentPosition = values.stop - 10;
 		       			}
 
-		       			methods.setValues({
-		       								id: $this.parent().data('sectionData').id,
-		       								stop:  $this.parent().position().left + width
-		       							});
-
-
-		       		} else if ($this.is('.section-body')) {
-		       			var left = e.pageX - start_position;
-
-		       			// Setup boundries
-		       			if (left < 0) {
-		       				left = 0;
-
-		       			} else if (left + $this.parent().width() > rangeInterface.width()) {
-		       				left = rangeInterface.width() - $this.parent().width();
-		       			}
-
-	       				methods.setValues({
-	       								id: $this.parent().data('sectionData').id,
-	       								start: left,
-	       								stop: $this.parent().width() + left
-	       							});
+                methods.setValues({
+   								id: id,
+   								start: currentPosition
+   							});
 		       		}
-
 	       			// trigger the onChange event
 					if (typeof options.onChange == 'function') {
 						options.onChange.call(rangeInterface, e);
 					}
 		       });
 		    })
-			.on('mouseup', '.section-body, .dragbar', function(e) {
+			.on('mouseup', '.section-body, .dragbar-left', function(e) {
 				if (!dragging) {
 					// Clicked
 					$('.section', rangeInterface).removeClass('selected');
@@ -239,18 +226,93 @@
 				}
 			});
 
+      /* Dragbar right */
+
+      this.empty().on('mousedown', '.section-body, .dragbar-right', function(e){
+         e.preventDefault();
+
+         var $this = $(this);
+         var start_position = e.pageX - $this.parent().position().left;
+
+         currentSectionData = $this.parent().data('sectionData');
+
+         $this.parent().addClass('dragging');
+
+          // if user just clicked then no need to run dragging code below
+      $(document).on('mouseup', function() {
+        $(document).unbind('mousemove');
+      });
+
+         $(document).on('mousemove', function(e){
+            dragging = true;
+
+            if ($this.is('.dragbar-right')) {
+              var width = e.pageX - $this.parent().offset().left;
+
+              // Setup boundries
+              if ($this.parent().position().left + width > rangeInterface.width()) {
+                width = rangeInterface.width() - $this.parent().position().left;
+              } else if (width < 10) {
+                width = 10;
+              }
+
+              methods.setValues({
+                        id: $this.parent().data('sectionData').id,
+                        stop:  $this.parent().position().left + width
+                      });
+
+
+            } else if ($this.is('.section-body')) {
+              var left = e.pageX - start_position;
+              console.log('left', left);
+
+              // Setup boundries
+              if (left < 0) {
+                left = 0;
+
+              } else if (left + $this.parent().width() > rangeInterface.width()) {
+                left = rangeInterface.width() - $this.parent().width();
+              }
+
+              methods.setValues({
+                      id: $this.parent().data('sectionData').id,
+                      start: left,
+                      stop: $this.parent().width() + left
+                    });
+            }
+
+            // trigger the onChange event
+        if (typeof options.onChange == 'function') {
+          options.onChange.call(rangeInterface, e);
+        }
+         });
+      })
+      .on('mouseup', '.section-body, .dragbar-right', function(e) {
+        if (!dragging) {
+          // Clicked
+          $('.section', rangeInterface).removeClass('selected');
+          $(this).parent().addClass('selected');
+
+          methods.selectSection($(this).parent().data('sectionData').id);
+
+          // trigger the onSectionClick event
+          if (typeof options.onSectionClick == 'function') {
+            options.onSectionClick.call(rangeInterface, e, currentSectionData);
+          }
+        }
+      });
+
 			$(document).on('mouseup', function() {
 				$('.section', this).removeClass('dragging');
-		   		
 		   		if (dragging) {
 		      		$(document).unbind('mousemove');
-		    		dragging = false;	
+		    		  dragging = false;
 		   		}
 			});
     	}
-    	
+
         return this;
- 
+
     };
- 
+
 }( jQuery ));
