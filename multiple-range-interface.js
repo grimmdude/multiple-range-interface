@@ -43,6 +43,25 @@
 							return rangeInterface;
 						});
 			},
+      getBounds : function(id, start, stop) {
+          var currentValues = methods.getValues();
+          var minX = 0;
+          var maxX = rangeInterface.width();
+          currentValues.forEach(function(el,i) {
+            if (el.id != id){
+              if (el.stop > minX && el.stop <= start){
+                minX = el.stop;
+              }
+              if (el.start < maxX && el.start >= stop){
+                maxX = el.start;
+              }
+            }
+          });
+          return {
+            min: minX + 1,
+            max: maxX - 1
+          };
+      },
       getValuesById : function(id) {
 						var values = $('.section[data-id=' + id + ']', rangeInterface);
             return values.data('sectionData');
@@ -97,8 +116,6 @@
 									if (options.hasOwnProperty('color')) {
 										$this.css('background', options.color);
 									}
-
-									//console.log(new_data);
 								}
 							});
 
@@ -194,15 +211,17 @@
 		       		if ($this.is('.dragbar-left')) {
                 var offset = $(rangeInterface).offset();
                 var currentPosition = e.pageX - offset.left;
-                var id = $this.parent().data('sectionData').id;
-                var values = methods.getValuesById(id);
+                var currentItem = $this.parent().data('sectionData');
+                var bounds = methods.getBounds(currentItem.id, currentItem.start, currentItem.stop);
 
-		       			if (currentPosition > values.stop - 10) {
-		       				currentPosition = values.stop - 10;
+		       			if (currentPosition > currentItem.stop - 10) {
+		       				currentPosition = currentItem.stop - 10;
 		       			}
 
+                currentPosition = (currentPosition < bounds.min) ? bounds.min : currentPosition;
+
                 methods.setValues({
-   								id: id,
+   								id: currentItem.id,
    								start: currentPosition
    							});
 		       		}
@@ -257,9 +276,17 @@
                 width = 10;
               }
 
+              var bounds = methods.getBounds(currentSectionData.id, currentSectionData.start, currentSectionData.stop);
+
+              if (width > currentSectionData.stop - 10) {
+                width = currentSectionData.stop - 10;
+              }
+
+              width = (width + $this.parent().position().left > bounds.max) ? bounds.max - $this.parent().position().left : width;
+
               methods.setValues({
                         id: $this.parent().data('sectionData').id,
-                        stop:  $this.parent().position().left + width
+                        stop: $this.parent().position().left + width
                       });
 
 
@@ -272,6 +299,15 @@
 
               } else if (left + $this.parent().width() > rangeInterface.width()) {
                 left = rangeInterface.width() - $this.parent().width();
+              }
+
+              var bounds = methods.getBounds(currentSectionData.id, currentSectionData.start, currentSectionData.stop);
+
+              if (left < bounds.min){
+                left = bounds.min;
+              }
+              if (left + $this.parent().width() > bounds.max){
+                left = bounds.max - $this.parent().width();
               }
 
               methods.setValues({
@@ -300,6 +336,52 @@
             options.onSectionClick.call(rangeInterface, e, currentSectionData);
           }
         }
+      })
+
+      .on('click', rangeInterface, function(event) {
+          if(event.target != this) {
+              return false;
+          }
+
+          var offset = $(this).offset();
+          var clickPosition = event.pageX - offset.left;
+
+          // Get values
+          var values = methods.getValues();
+
+          // Check if the user clicks inside a time frame already defined
+          var isInValues = [];
+          values.forEach(function(value) {
+              if(clickPosition >= value.start && clickPosition <= value.stop) {
+                  isInValues.push(value);
+              }
+          });
+
+          if(!isInValues.length > 0) {
+
+              var bounds = methods.getBounds(null, clickPosition, clickPosition + 1);
+              var max = ((bounds.max - clickPosition) > 200) ? 200 : (bounds.max - clickPosition);
+
+              // Set an incremental id
+              var lastValue = (values.length > 0) ? values[values.length - 1].id : 0;
+              methods.addSection();
+              methods.setValues({
+                  id: lastValue + 1,
+                  start: clickPosition,
+                  stop: clickPosition + max
+              });
+
+              // Add to last item the id
+              $(this)
+              .find('.section:last-child')
+              .attr('data-id', lastValue + 1);
+
+              // Add the left/right value
+              $(this)
+              .find('.section[data-id=' + (lastValue + 1) + '] .section-body')
+              .attr('data-before', clickPosition)
+              .attr('data-after', clickPosition + 200);
+          }
       });
 
 			$(document).on('mouseup', function() {
@@ -309,6 +391,7 @@
 		    		  dragging = false;
 		   		}
 			});
+
     	}
 
         return this;
