@@ -265,7 +265,6 @@
 
             } else if ($this.is('.section-body')) {
               var left = e.pageX - start_position;
-              console.log('left', left);
 
               // Setup boundries
               if (left < 0) {
