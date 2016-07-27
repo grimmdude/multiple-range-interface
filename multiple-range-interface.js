@@ -225,7 +225,8 @@
 
                 methods.setValues({
    								id: currentItem.id,
-   								start: currentPosition
+   								start: currentPosition,
+                  stop: currentItem.stop
    							});
 		       		}
 	       			// trigger the onChange event
