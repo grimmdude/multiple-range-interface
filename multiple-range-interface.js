@@ -76,7 +76,7 @@
 
 						return values;
 			},
-			setValues : function(options) {
+      setValues : function(options) {
 						// First make sure id is present in options
 						if (options.hasOwnProperty('id')) {
 							$('.section', rangeInterface).each(function() {
@@ -181,7 +181,8 @@
     	else {
     		var options = {
     			onChange : function() {},
-    			onSectionClick : function() {}
+    			onSectionClick : function() {},
+          onSectionAdded : function() {}
     		};
 
     		options = $.extend(options, method);
@@ -368,17 +369,15 @@
                   start: clickPosition,
                   stop: clickPosition + max
               });
+          }
 
-              // Add to last item the id
-              $(this)
-              .find('.section:last-child')
-              .attr('data-id', lastValue + 1);
-
-              // Add the left/right value
-              $(this)
-              .find('.section[data-id=' + (lastValue + 1) + '] .section-body')
-              .attr('data-before', clickPosition)
-              .attr('data-after', clickPosition + 200);
+          // trigger the onSectionAdded event
+          if (typeof options.onSectionAdded == 'function') {
+            options.onSectionAdded.call(rangeInterface, {
+                id: lastValue + 1,
+                start: clickPosition,
+                stop: clickPosition + max
+            });
           }
       });
 
