@@ -57,6 +57,7 @@
               }
             }
           });
+
           return {
             min: minX + 1,
             max: maxX - 1
@@ -212,6 +213,7 @@
                 var offset = $(rangeInterface).offset();
                 var currentPosition = e.pageX - offset.left;
                 var currentItem = $this.parent().data('sectionData');
+
                 var bounds = methods.getBounds(currentItem.id, currentItem.start, currentItem.stop);
 
 		       			if (currentPosition > currentItem.stop - 10) {
@@ -278,10 +280,6 @@
 
               var bounds = methods.getBounds(currentSectionData.id, currentSectionData.start, currentSectionData.stop);
 
-              if (width > currentSectionData.stop - 10) {
-                width = currentSectionData.stop - 10;
-              }
-
               width = (width + $this.parent().position().left > bounds.max) ? bounds.max - $this.parent().position().left : width;
 
               methods.setValues({
@@ -338,7 +336,7 @@
         }
       })
 
-      .on('click', rangeInterface, function(event) {
+      .on('mousedown', rangeInterface, function(event) {
           if(event.target != this) {
               return false;
           }
@@ -384,7 +382,7 @@
           }
       });
 
-			$(document).on('mouseup', function() {
+			$(document).on('mouseup', function(e) {
 				$('.section', this).removeClass('dragging');
 		   		if (dragging) {
 		      		$(document).unbind('mousemove');
