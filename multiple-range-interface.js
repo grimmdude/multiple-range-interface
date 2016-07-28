@@ -2,6 +2,7 @@
 
     $.fn.multipleRangeInterface = function(method, parameters) {
     	var rangeInterface = this;
+      var rangeInterfacePrevWidth = rangeInterface.width();
 
 		var methods = {
 			addSection : function(options) {
@@ -62,6 +63,9 @@
             min: minX + 1,
             max: maxX - 1
           };
+      },
+      mapValues : function(x, in_min, in_max, out_min, out_max) {
+        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
       },
       getValuesById : function(id) {
 						var values = $('.section[data-id=' + id + ']', rangeInterface);
@@ -182,7 +186,8 @@
     		var options = {
     			onChange : function() {},
     			onSectionClick : function() {},
-          onSectionAdded : function() {}
+          onSectionAdded : function() {},
+          onWindowResized : function() {}
     		};
 
     		options = $.extend(options, method);
@@ -389,6 +394,34 @@
 		    		  dragging = false;
 		   		}
 			});
+
+      var resizeId;
+      $(window).resize(function() {
+          clearTimeout(resizeId);
+          resizeId = setTimeout(doneResizing, 200);
+      });
+
+      function doneResizing() {
+        var xAxis = rangeInterface.width();
+        var values = methods.getValues();
+
+        if(values.indexOf(undefined) === -1) {
+            $(values).each(function(i, el) {
+                methods.setValues({
+                    id: el.id,
+                    start: methods.mapValues(el.start, 0, rangeInterfacePrevWidth, 0, rangeInterface.width()),
+                    stop: methods.mapValues(el.stop, 0, rangeInterfacePrevWidth, 0, rangeInterface.width())
+                });
+            });
+
+            // trigger the onSectionAdded event
+            if (typeof options.onWindowResized == 'function') {
+              options.onWindowResized.call(rangeInterface);
+            }
+        }
+
+        rangeInterfacePrevWidth = rangeInterface.width();
+      }
 
     	}
 
