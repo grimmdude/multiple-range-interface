@@ -1,11 +1,11 @@
 {
   "name": "multiple-range-interface",
   "main": "multiple-range-interface.js",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "dependencies": {
     "jquery": ">=1.6"
   },
-  "homepage": "https://github.com/grimmdude/multiple-range-interface",
+  "homepage": "https://github.com/paolorovella/multiple-range-interface",
   "authors": [
     "Garrett Grimm <garrett@grimmdude.com>"
   ],
